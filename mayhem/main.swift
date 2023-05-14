@@ -36,4 +36,5 @@ public func test(_ start: UnsafeRawPointer, _ count: Int) -> CInt {
         print(err)
         print(type(of: err))
     }
+    return 0;
 }
