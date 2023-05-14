@@ -13,6 +13,7 @@ let package = Package(
 		.library(
             name: "SwiftDraw",
             targets: ["SwiftDraw"]),
+        .executable(name: "SwiftDrawFuzz", targets: ["SwiftDrawFuzz"])
     ],
     dependencies: [],
     targets: [
@@ -26,6 +27,19 @@ let package = Package(
             dependencies: ["SwiftDraw"],
             path: "CommandLine"
 		),
+        .executableTarget(
+            name: "SwiftDrawFuzz",
+            dependencies: ["SwiftDraw"],
+            path: "mayhem",
+            sources: ["FuzzedDataProvider.swift", "main.swift"],
+            swiftSettings: [
+                .unsafeFlags(["-sanitize=fuzzer,address"]),
+                .unsafeFlags(["-parse-as-library"])
+            ],
+            linkerSettings: [
+                .unsafeFlags(["-sanitize=fuzzer,address"])
+            ]
+        ),
         .testTarget(
             name: "SwiftDrawTests",
             dependencies: ["SwiftDraw"],

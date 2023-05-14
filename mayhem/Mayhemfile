@@ -1,0 +1,8 @@
+project: SwiftDraw
+target: fuzz-SwiftDraw
+testsuite:
+    - file://mayhem/testsuite
+
+cmds:
+  - cmd: /release/SwiftDrawFuzz
+    libfuzzer: true
