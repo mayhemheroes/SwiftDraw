@@ -18,6 +18,7 @@ public func test(_ start: UnsafeRawPointer, _ count: Int) -> CInt {
     
     do {
         if let svg = SVG(data: svg_data) {
+            svg.rasterize()
             switch (data_choice) {
             case 0:
                 try svg.pngData()
@@ -32,8 +33,8 @@ public func test(_ start: UnsafeRawPointer, _ count: Int) -> CInt {
         return 0;
     }
     catch let err {
-        print(err)
-        print(type(of: err))
+//        print(err)
+//        print(type(of: err))
         exit(EXIT_FAILURE)
     }
     return 0;

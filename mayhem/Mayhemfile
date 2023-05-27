@@ -6,3 +6,4 @@ testsuite:
 cmds:
   - cmd: /release/SwiftDrawFuzz
     libfuzzer: true
+    timeout: 1
