@@ -18,7 +18,6 @@ public func test(_ start: UnsafeRawPointer, _ count: Int) -> CInt {
     
     do {
         if let svg = SVG(data: svg_data) {
-            svg.rasterize()
             switch (data_choice) {
             case 0:
                 try svg.pngData()
