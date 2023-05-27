@@ -9,22 +9,31 @@ import MSVCRT
 import Foundation
 import SwiftDraw
 
+let svg_options = [SVG.Options.ArrayLiteralElement(), SVG.Options.Element(), SVG.Options.default]
+
 @_cdecl("LLVMFuzzerTestOneInput")
 public func test(_ start: UnsafeRawPointer, _ count: Int) -> CInt {
     let fdp = FuzzedDataProvider(start, count)
-    let svg_data = Data(fdp.ConsumeRemainingString().utf8)
-    
-    let data_choice = fdp.ConsumeIntegralInRange(from: 0, to: 2)
-    
+
+    let data_choice = fdp.ConsumeIntegralInRange(from: 0, to: 3)
+
+    let svg_str = fdp.ConsumeRandomLengthString()
+
     do {
-        if let svg = SVG(data: svg_data) {
+        if data_choice == 0 {
+            try SVGRenderer.makeExpanded(
+                    path: fdp.ConsumeRandomLengthString(),
+                    transform: fdp.ConsumeRandomLengthString(),
+                    precision: fdp.ConsumeIntegralInRange(from: 0, to: 99))
+        }
+        else if let svg = SVG(data: Data(svg_str.utf8), options: fdp.PickValueInList(from: svg_options)) {
             switch (data_choice) {
-            case 0:
-                try svg.pngData()
             case 1:
-                try svg.jpegData()
+                svg.pngData()
             case 2:
-                try svg.pdfData()
+                svg.jpegData()
+            case 3:
+                svg.pdfData()
             default:
                 fatalError("Unsupported data choice")
             }
@@ -32,9 +41,11 @@ public func test(_ start: UnsafeRawPointer, _ count: Int) -> CInt {
         return 0;
     }
     catch let err {
-//        print(err)
-//        print(type(of: err))
+        if err.localizedDescription.contains("operation could not be completed") {
+            return -1;
+        }
+        print(err.localizedDescription)
+        print(type(of: err))
         exit(EXIT_FAILURE)
     }
-    return 0;
 }
